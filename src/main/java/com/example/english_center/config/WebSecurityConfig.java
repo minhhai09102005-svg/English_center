@@ -1,31 +1,29 @@
 package com.example.english_center.config;
 
-import com.example.english_center.security.CustomUserDetailsService;
-import lombok.NoArgsConstructor;
+import com.example.english_center.security.CustomJwtAuthConverter;
+import com.example.english_center.security.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class WebSecurityConfig {
     private final UserDetailsService userDetailsService;
-
+    private final CustomJwtAuthConverter customJwtAuthConverter;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final PasswordEncoder passwordEncoder;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -35,7 +33,14 @@ public class SecurityConfig {
                 // Phân quyền URL
                 .authorizeHttpRequests(request -> request
                         // URL public, không cần đăng nhập
-                        .requestMatchers("/", "/security/public").permitAll()
+                        .requestMatchers("/",
+                                "/security/public",
+                                "/auth/login",
+                                "/auth/register",
+                                "/oauth2/**",
+                                "/login/oauth2/**",
+                                "/login**"
+                        ).permitAll()
 
                         // Test role
                         .requestMatchers("/security/manager").hasRole("MANAGER")
@@ -55,15 +60,18 @@ public class SecurityConfig {
 
                 // Không lưu session, hợp với hướng REST API/JWT sau này
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(customJwtAuthConverter)
+                        )
                 )
                 .authenticationProvider(authenticationProvider())
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuth2LoginSuccessHandler)
+                )
                 .build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
     }
 
     @Bean
@@ -71,8 +79,13 @@ public class SecurityConfig {
         DaoAuthenticationProvider provider =
                 new DaoAuthenticationProvider(userDetailsService);
 
-        provider.setPasswordEncoder(passwordEncoder());
+        provider.setPasswordEncoder(passwordEncoder);
 
         return provider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }

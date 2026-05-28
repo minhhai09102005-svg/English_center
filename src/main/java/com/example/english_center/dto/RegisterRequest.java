@@ -1,11 +1,10 @@
 package com.example.english_center.dto;
 
 import com.example.english_center.enums.Gender;
+import com.example.english_center.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -25,4 +24,6 @@ public class RegisterRequest {
     private String phoneNumber;
 
     private Gender gender;
+
+    private Role role;
 }

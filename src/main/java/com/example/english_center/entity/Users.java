@@ -36,6 +36,7 @@ public class Users {
     private String phoneNumber;
 
     @Column(name = "gender")
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Enumerated(EnumType.STRING)

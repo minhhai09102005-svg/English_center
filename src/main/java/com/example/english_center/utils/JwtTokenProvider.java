@@ -32,7 +32,7 @@ public class JwtTokenProvider {
 
                 .issuedAt(now)
                 .expiration(expiryDate)
-                .signWith(jwtSecretKey)
+                .signWith(jwtSecretKey, Jwts.SIG.HS256)
                 .compact();
     }
 }

@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -22,6 +25,11 @@ public class StudentProfiles {
 
     @Id
     private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "id")
+    private Users user;
 
     @Column(name = "studentCode", nullable = false, unique = true, length = 20)
     private String studentCode;
@@ -47,8 +55,12 @@ public class StudentProfiles {
     private LocalDateTime updatedAt;
 
     public void generateStudentCode() {
-        if (this.id != null) {
-            this.studentCode = "S" + this.id;
+        Long sourceId = this.id;
+        if (sourceId == null && this.user != null) {
+            sourceId = this.user.getId();
+        }
+        if (sourceId != null) {
+            this.studentCode = "S" + sourceId;
         }
     }
 }

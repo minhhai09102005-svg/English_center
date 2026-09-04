@@ -31,9 +31,6 @@ public class Course {
     @Column(name = "courseName", nullable = false, length = 150)
     private String courseName;
 
-    @Column(name = "levelName", length = 50)
-    private String levelName;
-
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 

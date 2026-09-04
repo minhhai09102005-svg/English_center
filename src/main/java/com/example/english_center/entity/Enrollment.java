@@ -26,7 +26,7 @@ public class Enrollment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "classId", nullable = false)
-    private Course courseClass;
+    private Classes courseClass;
 
     @CreationTimestamp
     @Column(name = "enrolledAt", updatable = false)

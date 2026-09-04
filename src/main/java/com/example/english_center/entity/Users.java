@@ -47,6 +47,9 @@ public class Users {
     @Column(name = "status")
     private UserStatus status;
 
+    @Column(name = "avatarUrl", length = 1000)
+    private String avatarUrl;
+
     @CreationTimestamp
     @Column(name = "createdAt")
     private LocalDateTime createdAt;

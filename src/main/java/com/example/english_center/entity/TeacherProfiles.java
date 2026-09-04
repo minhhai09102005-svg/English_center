@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 
 import java.time.LocalDateTime;
 
@@ -21,6 +25,11 @@ public class TeacherProfiles {
 
     @Id
     private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "id")
+    private Users user;
 
     @Column(name = "teacherCode", nullable = false, unique = true, length = 20)
     private String teacherCode;
@@ -49,8 +58,12 @@ public class TeacherProfiles {
     private String documentFolderUrl;
 
     public void generateTeacherCode() {
-        if (this.id != null) {
-            this.teacherCode = "T" + this.id;
+        Long sourceId = this.id;
+        if (sourceId == null && this.user != null) {
+            sourceId = this.user.getId();
+        }
+        if (sourceId != null) {
+            this.teacherCode = "T" + sourceId;
         }
     }
 }

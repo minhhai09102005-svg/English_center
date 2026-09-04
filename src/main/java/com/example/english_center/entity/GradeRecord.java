@@ -28,7 +28,7 @@ public class GradeRecord {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "classId", nullable = false)
-    private Course courseClass;
+    private Classes courseClass;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gradeType", nullable = false)

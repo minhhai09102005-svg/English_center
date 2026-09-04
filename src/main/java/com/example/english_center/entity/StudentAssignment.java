@@ -38,7 +38,7 @@ public class StudentAssignment {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private StudentAssignmentStatus status;
+    private StudentAssignmentStatus status = StudentAssignmentStatus.PENDING;
 
     @Column(name = "scoreValue", precision = 5, scale = 2)
     private BigDecimal scoreValue;

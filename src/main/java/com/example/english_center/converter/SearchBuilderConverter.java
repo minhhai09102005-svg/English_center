@@ -1,6 +1,8 @@
 package com.example.english_center.converter;
 
+import com.example.english_center.builder.CourseSearchBuilder;
 import com.example.english_center.builder.UserAccountSearchBuilder;
+import com.example.english_center.enums.CourseStatus;
 import com.example.english_center.enums.Gender;
 import com.example.english_center.enums.Role;
 import com.example.english_center.enums.UserStatus;
@@ -18,6 +20,13 @@ public class SearchBuilderConverter {
         builder.setRole(MapUtil.getObject(params, "role", Role.class));
         builder.setStatus(MapUtil.getObject(params, "status", UserStatus.class));
         builder.setGender(MapUtil.getObject(params, "gender", Gender.class));
+        return builder.build();
+    }
+
+    public CourseSearchBuilder toCourseSearchBuilder(Map<String, Object> params) {
+        CourseSearchBuilder.Builder builder = new CourseSearchBuilder.Builder();
+        builder.setKeyword(MapUtil.getObject(params, "keyword", String.class));
+        builder.setStatus(MapUtil.getObject(params, "status", CourseStatus.class));
         return builder.build();
     }
 }

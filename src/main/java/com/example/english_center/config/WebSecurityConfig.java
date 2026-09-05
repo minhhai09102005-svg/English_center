@@ -21,7 +21,9 @@ public class WebSecurityConfig {
     private static final String[] PUBLIC_ENDPOINTS = {
             "/",
             "/security/public",
-            "/auth/login"
+            "/auth/login",
+            "/courses",
+            "/courses/**"
     };
 
     private final CustomJwtAuthConverter customJwtAuthConverter;

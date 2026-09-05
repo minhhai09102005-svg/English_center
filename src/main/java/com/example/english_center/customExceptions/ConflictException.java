@@ -21,5 +21,4 @@ public class ConflictException extends RuntimeException {
     public static ConflictException duplicateCourseName() {
         return new ConflictException("Tên khóa học đã tồn tại");
     }
-
 }
